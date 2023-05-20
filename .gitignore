@@ -1,1 +1,7 @@
 .DS_Store
+*workspace
+*checkpoint*
+driver_path
+*.log
+*drivers*
+*.cpython*
