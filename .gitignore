@@ -5,3 +5,5 @@ driver_path
 *.log
 *drivers*
 *.cpython*
+*.csv
+!*test*.csv
