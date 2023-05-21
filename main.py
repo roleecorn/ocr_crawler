@@ -31,8 +31,9 @@ logging.info('This is a test message')
 a, b = util.read_csv(Path.cwd() / 'eddiebauer_test.csv')
 listsite, site_feature = util.read_csv(
     (myhome / 'cite_file' / f'{args.shop_name}.csv').resolve())
-
-driver = util.new_driver()
+with open('driver_path', 'r', encoding='big5') as f:
+    tmp = f.read()
+driver = util.new_driver(myhome / tmp)
 with open('cite_fathers.json', 'r') as file:
     father: str = json.load(file)[args.shop_name]
 for i in len(listsite):

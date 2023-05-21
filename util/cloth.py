@@ -1,5 +1,4 @@
 from pathlib import Path
-from classes.big5 import formatbig5
 import sqlite3
 
 
