@@ -4,7 +4,21 @@
 1. 使用selenium打開網站
 2. 捕捉事先設定好的商品頁面的class名稱
 3. 對該物件的所有一級子物件進行截圖
-4. 使用ocr對每一張圖片進行解析
+4. 依照csv中描述的商品屬性來進行儲存
+5. 使用ocr對每一張圖片進行解析
+6. 將商品的商品屬性、價格、性別等等輸入sqlite的資料庫
+
+| Field | Description |
+| -----| ---- |
+|oriprice|Original price of the item|
+|price	|Current price of the item|
+|imgcode|Filename of the item's image|
+|facturer|Manufacturer of the item|
+|color	|Number of Available Colors|
+|name	|Name or title of the item|
+|star	|Rating or number of stars for the item|
+|path	|Location and feature of the item|
+|sex	|The gender of the item|
 
 ## ocr
 
