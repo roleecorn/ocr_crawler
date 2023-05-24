@@ -4,17 +4,19 @@ import sqlite3
 
 class cloth:
     """
-    服裝本身作為class完成標準規格化
+    服裝本身作為 class 完成標準規格化
     可置入參數：
-    oriprice
-    price
-    imgcode
-    facturer
-    color
-    name
-    star
-    path
-    sex
+    - oriprice: 原價
+    - price: 價格
+    - imgcode: 圖片檔名
+    - facturer: 製造商
+    - color: 顏色數量
+    - name: 商品名稱
+    - star: 星數
+    - path: 檔案路徑
+    - sex: 性別
+    - ver: 寫入時間
+    - feature: 材質
     """
 
     def __init__(self, datas: dict) -> None:
