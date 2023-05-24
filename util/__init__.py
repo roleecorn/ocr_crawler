@@ -15,7 +15,8 @@ from .new_driver import new_driver
 from .check_imgpath import check_imgpath
 
 
-__all__ = ["read_csv", "new_driver",
+__all__ = ["read_csv",
+           "new_driver",
            "remove_non_alphanumeric",
            "remove_non_number",
            "check_imgpath"]

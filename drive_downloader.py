@@ -1,6 +1,5 @@
 from webdriver_manager.chrome import ChromeDriverManager
 from pathlib import Path
-import os
 
 
 def download_driver(path: Path):
@@ -11,9 +10,10 @@ def download_driver(path: Path):
         path (str): Chrome 驱动程序下载路径。
     """
     driver = ChromeDriverManager(path=path).install()
-    relative_path = os.path.relpath(driver)
+    driver = Path(driver)
+    relative_path = driver.relative_to(Path.cwd())
     with open('driver_path', mode='w', encoding='big5') as f:
-        f.write(relative_path)
+        f.write(str(relative_path))
 
     print(f'Chrome driver is installed at {driver}')
 
