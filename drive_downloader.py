@@ -1,10 +1,9 @@
 from webdriver_manager.chrome import ChromeDriverManager
 from pathlib import Path
 import os
-myhome = Path.cwd()
 
 
-def download_driver(path):
+def download_driver(path: Path):
     """
     下载 Chrome 驱动程序并将其路径保存到文件中。
 
@@ -20,5 +19,4 @@ def download_driver(path):
 
 
 if __name__ == "__main__":
-    download_location = myhome.resolve()
-    download_driver(download_location)
+    download_driver(Path.cwd())
