@@ -5,7 +5,7 @@ from new_driver import new_driver
 import uuid
 
 
-def capture(ele: WebElement, driver: webdriver.Chrome, path: Path):
+def capture(ele: WebElement, path: Path):
     """
     輸入一個網頁物件，並對他進行快照，之後將圖片儲存在本地
     """
