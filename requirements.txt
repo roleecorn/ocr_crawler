@@ -1,4 +1,4 @@
 selenium
 webdriver-manager
-opencv-python
 pytesseract
+Pillow
