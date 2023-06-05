@@ -1,6 +1,5 @@
 from selenium.webdriver.remote.webelement import WebElement
 from pathlib import Path
-from new_driver import new_driver
 import uuid
 
 
@@ -16,6 +15,7 @@ def capture(ele: WebElement, path: Path):
 
 if __name__ == "__main__":
     import time
+    from new_driver import new_driver
     myhome = Path.cwd().parent
     driver_path = myhome / '.wdm' / 'drivers' / 'chromedriver' / 'win32'
     driver_path = driver_path / '113.0.5672' / 'chromedriver.exe'
