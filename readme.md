@@ -8,7 +8,7 @@
 5. 使用ocr對每一張圖片進行解析
 6. 將商品的商品屬性、價格、性別等等輸入sqlite的資料庫
 
-| Field | Description |
+| Feature | Description |
 | -----| ---- |
 |oriprice|Original price of the item|
 |price	|Current price of the item|
@@ -20,8 +20,26 @@
 |path	|Location and feature of the item|
 |sex	|The gender of the item|
 
-## ocr
+## Test版本執行方法
+### 環境設定 `python3.9+`
+1. 克隆這個倉庫，你也可以從安裝包下載 [v0.1.0版本](https://github.com/roleecorn/ocr_crawler/releases/tag/v0.1.0)
 
+```
+git clone https://github.com/roleecorn/ocr_crawler
+cd ocr_crawler
+```
+2. 安裝套件
+```
+pip install -r requirements.txt 
+```
+3. 執行測試
+
+修改`cite_file`資料夾內的檔案，與`cite_fathers.json`的內容後執行
+```
+python main.py --shop_name <你的目標商店名稱> --test
+```
+
+## OCR辨識
 由於同一個網站對於所有商品會有相同的佈局
 
 因此，使用ocr前事先將每一個對應的位置標記好有助於區分不同的資料屬性
