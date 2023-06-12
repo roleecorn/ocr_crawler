@@ -14,11 +14,14 @@ from .string_util import remove_non_alphanumeric, remove_non_number
 from .new_driver import new_driver
 from .check_imgpath import check_imgpath
 from .ele_capture import capture
+from .ocr_test import Ocr
 
 __all__ = ["read_csv",
            "new_driver",
            "remove_non_alphanumeric",
            "remove_non_number",
            "check_imgpath",
-           "capture"]
+           "capture",
+           "Ocr",
+           ]
 __version__ = "0.2"
