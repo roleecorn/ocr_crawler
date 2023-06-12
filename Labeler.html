@@ -100,7 +100,7 @@
             if (filename === '') {
                 filename = 'data'; // 若使用者未輸入，則設定預設檔名為 'data'
             }
-            a.download = filename+'.json';
+            a.download = filename+'_'+document.getElementById("mySelect").value+'.json';
             // 添加 <a> 元素到 DOM 中
             document.body.appendChild(a);
             // 觸發 <a> 元素的點擊事件
