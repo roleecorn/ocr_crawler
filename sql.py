@@ -6,7 +6,7 @@ import sys
 dbname = sys.argv[1]
 
 
-status = sqlite3.connect(f"{dbname}/{dbname}.db")
+status = sqlite3.connect(f"images/{dbname}/{dbname}.db")
 status.execute(f"drop table if exists {dbname}")
 try:
     status.execute(f"create table {dbname}(name text,imgcode text,oriprice int, price int, color int,feature text,gender int ,brand text,fabric text, path text,ver int)")
