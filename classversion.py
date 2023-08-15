@@ -72,14 +72,20 @@ class ocr_crawler:
 
         for element in target_elements:
             tmp = util.capture(ele=element, path=imgpath)
-            print(tmp)
 
     def shot_all_classes(self):
-
+        self.driver.get(url=self.listsite[0])
+        time.sleep(5)
         # 使用 XPath 選擇器來選擇所有有 class 屬性的元素
         elements = driver_control.get_all_classes(self.driver)
 
         for element in elements:
-            ele = self.driver.find_element(
-                "class name", element)
-            util.capture(ele=ele, path=self.home / 'src')
+            try:
+                ele = self.driver.find_element(
+                    "class name", element)
+            except Exception:
+                continue
+            try:
+                util.capture(ele=ele, path=self.home / 'search')
+            except Exception:
+                pass
