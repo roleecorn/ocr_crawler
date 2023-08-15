@@ -1,6 +1,8 @@
 from PIL import Image
 import pytesseract
-pytesseract.pytesseract.tesseract_cmd = r'D:\\program\\Tesseract-OCR\\tesseract.exe'
+with open('ocr_path.txt', mode='r') as f:
+    tmp = f.read()
+pytesseract.pytesseract.tesseract_cmd = tmp
 
 
 def Ocr(img, x, y, w, h):

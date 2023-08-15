@@ -37,7 +37,7 @@ driver = util.new_driver(myhome / tmp)
 with open('cite_fathers.json', 'r') as file:
     father: str = json.load(file)[args.shop_name]
 feature_label = {}
-for file in list((myhome / 'feature_file').glob('eddiebauer*.json')):
+for file in list((myhome / 'feature_file').glob(f'{args.shop_name}*.json')):
     print(file)
     with open(file, 'r') as f:
         tmp = json.load(f)
@@ -47,7 +47,7 @@ for file in list((myhome / 'feature_file').glob('eddiebauer*.json')):
 images=[]
 if args.test:
     driver.get(url=listsite[0])
-    imgpath = util.check_imgpath(imgpath=myhome / args.shop_name,
+    imgpath = util.check_imgpath(imgpath=myhome / 'images' / args.shop_name,
                                  imgfile=site_feature[0])
     time.sleep(5)
     driver_control.scroll_to_bottom_and_wait(driver=driver)
