@@ -12,3 +12,4 @@ driver_path
 *.db
 *.json
 !src/*
+config.py
