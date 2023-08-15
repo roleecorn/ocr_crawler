@@ -9,11 +9,11 @@ def download_driver(path: Path):
     Args:
         path (str): Chrome 驱动程序下载路径。
     """
-    driver = ChromeDriverManager(path=path).install()
+    driver = ChromeDriverManager().install()
     driver = Path(driver)
-    relative_path = driver.relative_to(Path.cwd())
-    with open('driver_path', mode='w', encoding='big5') as f:
-        f.write(str(relative_path))
+    # relative_path = driver.relative_to(Path.cwd())
+    # with open('driver_path', mode='w', encoding='big5') as f:
+    #     f.write(str(relative_path))
 
     print(f'Chrome driver is installed at {driver}')
     return driver

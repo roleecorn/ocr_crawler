@@ -3,12 +3,15 @@ from pathlib import Path
 import uuid
 
 
-def capture(ele: WebElement, path: Path):
+def capture(ele: WebElement, path: Path, name: str=""):
     """
     輸入一個網頁物件，並對他進行快照，之後將圖片儲存在本地
     """
-    uuid_obj = uuid.uuid4()
-    filename = str(uuid_obj)[:8]+'.png'
+    if not name:
+        uuid_obj = uuid.uuid4()
+        filename = str(uuid_obj)[:8]+'.png'
+    else:
+        filename = name + '.png'
     ele.screenshot(str(path / filename))
     return path / filename
 
