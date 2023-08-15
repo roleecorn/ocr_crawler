@@ -16,6 +16,7 @@ def download_driver(path: Path):
         f.write(str(relative_path))
 
     print(f'Chrome driver is installed at {driver}')
+    return driver
 
 
 if __name__ == "__main__":
