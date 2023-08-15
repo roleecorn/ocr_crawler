@@ -7,12 +7,7 @@ from selenium.common.exceptions import NoSuchElementException
 import logging
 import util
 import driver_control
-
-logging.basicConfig(
-    filename='test.log',
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
+from debugger import Debugger
 
 
 class ocr_crawler:
@@ -30,6 +25,7 @@ class ocr_crawler:
             self.target_class: str = json.load(file)[self.cite]
 
     def sql_add(self) -> None:
+        Debugger.info_print('new database')
         status = sqlite3.connect(self.db_path)
         query = f"""
         CREATE TABLE {self.cite} (
@@ -54,6 +50,7 @@ class ocr_crawler:
             (self.home / 'cite_file' / f'{self.cite}.csv'))
 
     def new_driver(self):
+        Debugger.info_print('new driver')
         self.driver = util.new_driver(self.driverpath)
 
     def close(self):
@@ -61,6 +58,7 @@ class ocr_crawler:
             self.driver.close()
 
     def test_start(self):
+        Debugger.info_print('test start')
         self.driver.get(url=self.listsite[0])
         imgpath = util.check_imgpath(imgpath=self.home / self.cite,
                                      imgfile=self.site_feature[0])
@@ -70,18 +68,18 @@ class ocr_crawler:
             target_elements = self.driver.find_elements(
                 "class name", self.target_class)
         except NoSuchElementException:
-            logging.error('element not find in target_element')
+            Debugger.error_print('element not find in target_element')
 
         for element in target_elements:
             tmp = util.capture(ele=element, path=imgpath)
             print(tmp)
 
     def shot_all_classes(self):
-        
+
         # 使用 XPath 選擇器來選擇所有有 class 屬性的元素
         elements = driver_control.get_all_classes(self.driver)
-        
+
         for element in elements:
-            ele =self.driver.find_element(
+            ele = self.driver.find_element(
                 "class name", element)
             util.capture(ele=ele, path=self.home / 'src')

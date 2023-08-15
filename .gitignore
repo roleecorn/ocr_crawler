@@ -10,3 +10,4 @@ driver_path
 *.png
 *.jpg
 !src/*
+config.py
