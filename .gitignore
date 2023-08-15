@@ -9,5 +9,7 @@ driver_path
 !*test*.csv
 *.png
 *.jpg
+*.db
+*.json
 !src/*
 config.py
