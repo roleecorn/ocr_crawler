@@ -46,6 +46,18 @@ python main.py --shop_name <你的目標商店名稱> --test
 
 `Labeler.html` 是一個靜態網頁，用來對圖片進行標記並將標記結果儲存為json
 
+## 網頁操作介面
+以flask為基底進行的網頁操作面板，透過包裝為class的方式進行簡單的控制程式碼
+
+目前具有執行測試與執行全部兩種模式，在根畫面輸入目標網站名稱即可完成初化並且移動到操作面板
+
+## exe版本
+
+使用pyinstaller進行包裝
+```bash
+pyinstaller --onefile --add-data "templates;templates/" --icon=src/web.ico --distpath=ex app.py
+```
+
 ## 待完成程式碼
 - [x]輸入一個網頁物件(WebElement)後能對他做截圖的函式
 
