@@ -1,8 +1,6 @@
 {
     "eddiebauer": "tile_wrapper_outer",
-    "Hackett": "c-product-list",
-    "Orvis": "c-product-tile-grid",
-    "psg": "grid-small-1-medium-3",
-    "originalpenguin": "grid--uniform",
-    "vineyardvines": "product-grid"
+    "Hackett": "c-product-tile",
+    "Orvis": "c-product-tile-grid__item",
+    "psg": "product-card"
 }
