@@ -80,11 +80,11 @@ class ocr_crawler:
                                      imgfile=['test'])
         self.one_page_start(imgpath=imgpath)
 
-    def regular_start(self, subcite:int):
+    def regular_start(self, subcite: int):
         Debugger.info_print(f'regular start {self.site_feature[subcite]}')
         self.driver.get(url=self.listsite[subcite])
-        if self.driver.current_url != self.listsite[0]:
-            self.driver.get(url=self.listsite[0])
+        if self.driver.current_url != self.listsite[subcite]:
+            self.driver.get(url=self.listsite[subcite])
         imgpath = util.check_imgpath(imgpath=self.home / self.cite,
                                      imgfile=self.site_feature[subcite])
         self.one_page_start(imgpath=imgpath)
