@@ -48,7 +48,7 @@ class ocr_crawler:
 
     def read_csv(self) -> None:
         self.listsite, self.site_feature = util.read_csv(
-            (self.home / 'cite_file' / f'{self.cite}.csv'))
+            (self.home / 'cite_file' / f'{self.cite}_test.csv'))
 
     def new_driver(self):
         Debugger.info_print('new driver')
@@ -73,6 +73,9 @@ class ocr_crawler:
     def test_start(self):
         Debugger.info_print('test start')
         self.driver.get(url=self.listsite[0])
+        time.sleep(3)
+        if self.driver.current_url != self.listsite[0]:
+            self.driver.get(url=self.listsite[0])
         imgpath = util.check_imgpath(imgpath=self.home / self.cite,
                                      imgfile=['test'])
         self.one_page_start(imgpath=imgpath)
@@ -80,6 +83,8 @@ class ocr_crawler:
     def regular_start(self, subcite:int):
         Debugger.info_print(f'regular start {self.site_feature[subcite]}')
         self.driver.get(url=self.listsite[subcite])
+        if self.driver.current_url != self.listsite[0]:
+            self.driver.get(url=self.listsite[0])
         imgpath = util.check_imgpath(imgpath=self.home / self.cite,
                                      imgfile=self.site_feature[subcite])
         self.one_page_start(imgpath=imgpath)
