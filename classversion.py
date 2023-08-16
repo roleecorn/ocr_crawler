@@ -4,7 +4,6 @@ from pathlib import Path
 import time
 import json
 from selenium.common.exceptions import NoSuchElementException
-import logging
 import util
 import driver_control
 from debugger import Debugger
@@ -18,11 +17,13 @@ class ocr_crawler:
         self.driverpath = download_driver(self.home)
         self.driver = None
         self.db_path = self.home / 'sql' / f"{cite}.db"
+        self.read_csv()
         if not self.db_path.exists():
             self.sql_add()
             time.sleep(1)
         with open('cite_fathers.json', 'r') as file:
-            self.target_class: str = json.load(file)[self.cite]
+            class_data: dict = json.load(file)
+            self.target_class: str = class_data.get(self.cite, "")
 
     def sql_add(self) -> None:
         Debugger.info_print('new database')
@@ -57,11 +58,7 @@ class ocr_crawler:
         if self.driver:
             self.driver.close()
 
-    def test_start(self):
-        Debugger.info_print('test start')
-        self.driver.get(url=self.listsite[0])
-        imgpath = util.check_imgpath(imgpath=self.home / self.cite,
-                                     imgfile=self.site_feature[0])
+    def one_page_start(self, imgpath: Path):
         time.sleep(5)
         driver_control.scroll_to_bottom_and_wait(driver=self.driver)
         try:
@@ -72,6 +69,27 @@ class ocr_crawler:
 
         for element in target_elements:
             tmp = util.capture(ele=element, path=imgpath)
+
+    def test_start(self):
+        Debugger.info_print('test start')
+        self.driver.get(url=self.listsite[0])
+        imgpath = util.check_imgpath(imgpath=self.home / self.cite,
+                                     imgfile=['test'])
+        self.one_page_start(imgpath=imgpath)
+
+    def regular_start(self, subcite:int):
+        Debugger.info_print(f'regular start {self.site_feature[subcite]}')
+        self.driver.get(url=self.listsite[subcite])
+        imgpath = util.check_imgpath(imgpath=self.home / self.cite,
+                                     imgfile=self.site_feature[subcite])
+        self.one_page_start(imgpath=imgpath)
+
+    def all_start(self):
+        start = time.time()
+        for i in range(len(self.listsite)):
+            self.regular_start(i)
+        end = time.time()
+        Debugger.dc_print(f'all start end cost {end - start}(s)')
 
     def shot_all_classes(self):
         self.driver.get(url=self.listsite[0])
