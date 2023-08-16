@@ -17,6 +17,7 @@ class ocr_crawler:
         self.driverpath = download_driver(self.home)
         self.driver = None
         self.db_path = self.home / 'sql' / f"{cite}.db"
+        self.read_csv()
         if not self.db_path.exists():
             self.sql_add()
             time.sleep(1)
