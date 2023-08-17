@@ -1,4 +1,5 @@
-from flask import Flask, render_template, jsonify,request,redirect, url_for
+from flask import Flask, render_template, jsonify, redirect, url_for
+import flask
 import time
 from classversion import ocr_crawler
 import threading
@@ -23,7 +24,7 @@ def ishome():
 @app.route('/start_cite')
 def start_cite():
     global craw
-    input_value = request.args.get('input', default='', type=str)
+    input_value = flask.request.args.get('input', default='', type=str)
     # 進行你需要的其他操作...
     craw = ocr_crawler(input_value)
     # 返回要重定向到的URL
@@ -46,4 +47,4 @@ def run_all():
     return jsonify(message="完整執行開始")
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
