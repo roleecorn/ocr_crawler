@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YML Editor</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<h2>YML Editor</h2>
+<h2>Cite:</h2> 
+<input type="text" id="shop" />
+<button onclick="loadData(document.getElementById('shop').value)">Go</button>
+
+
+<br>
+<h2>Data</h2> 
+<label>Target:</label>
+<input type="text" id="target" />
+<br>
+
+<label>Last Update:</label>
+<input type="text" id="lastupdate" />
+<br>
+<h4>Position</h4>
+<h5>Money</h5>
+X: <input type="text" id="money_x" />
+Y: <input type="text" id="money_y" />
+W: <input type="text" id="money_w" />
+H: <input type="text" id="money_h" />
+
+<h5>Title</h5>
+X: <input type="text" id="title_x" />
+Y: <input type="text" id="title_y" />
+W: <input type="text" id="title_w" />
+H: <input type="text" id="title_h" />
+
+<h5>Star</h5>
+X: <input type="text" id="star_x" />
+Y: <input type="text" id="star_y" />
+W: <input type="text" id="star_w" />
+H: <input type="text" id="star_h" />
+
+<br>
+<button onclick="submitData(document.getElementById('shop').value)">發送</button>
+
+<script>
+function loadData(shop) {
+    console.log(shop);
+    $.get("/get_yml?shop="+shop, function(data) {
+        $('#lastupdate').val(data['lastupdate']);
+        $('#target').val(data['target']);
+
+        $('#money_x').val(data['position']['money']['X']);
+        $('#money_y').val(data['position']['money']['Y']);
+        $('#money_w').val(data['position']['money']['w']);
+        $('#money_h').val(data['position']['money']['h']);
+
+        $('#title_x').val(data['position']['title']['X']);
+        $('#title_y').val(data['position']['title']['Y']);
+        $('#title_w').val(data['position']['title']['w']);
+        $('#title_h').val(data['position']['title']['h']);
+
+        $('#star_x').val(data['position']['star']['X']);
+        $('#star_y').val(data['position']['star']['Y']);
+        $('#star_w').val(data['position']['star']['w']);
+        $('#star_h').val(data['position']['star']['h']);
+    });
+}
+
+function submitData(shop) {
+    const data = {
+        lastupdate: $('#lastupdate').val(),
+        target: $('#target').val(),
+        position: {
+            money: {
+                X: parseInt($('#money_x').val()),
+                Y: parseInt($('#money_y').val()),
+                w: parseInt($('#money_w').val()),
+                h: parseInt($('#money_h').val())
+            },
+            title: {
+                X: parseInt($('#title_x').val()),
+                Y: parseInt($('#title_y').val()),
+                w: parseInt($('#title_w').val()),
+                h: parseInt($('#title_h').val())
+            },
+            star: {
+                X: parseInt($('#star_x').val()),
+                Y: parseInt($('#star_y').val()),
+                w: parseInt($('#star_w').val()),
+                h: parseInt($('#star_h').val())
+            }
+        }
+    };
+
+    $.ajax({
+        url: '/save_yml/' + shop,
+        method: 'POST',
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function(response) {
+            alert(response.message);
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            alert('Error: ' + errorThrown);
+        }
+    });
+}
+
+// Initial load
+// loadData();
+</script>
+
+</body>
+</html>

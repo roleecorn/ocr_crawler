@@ -1,0 +1,18 @@
+lastupdate: Fri, 08 Sep 2023 00:00:00 GMT
+position:
+  money:
+    X: 169
+    Y: 484
+    h: -18
+    w: -166
+  star:
+    X: 0
+    Y: 0
+    h: 111
+    w: 0
+  title:
+    X: 4
+    Y: 424
+    h: 38
+    w: 332
+target: tile_wrapper_outer

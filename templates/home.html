@@ -56,10 +56,17 @@
         <input type="text" id="inputText" placeholder="輸入商店名稱...">
         <button id="sendButton">發送</button>
     </div>
+    <a href="yml">編輯網站資料</a>
     
     <script>
-        document.getElementById("sendButton").addEventListener("click", function() {
+        const sendButton = document.getElementById("sendButton");
+        sendButton.addEventListener("click", function() {
             let inputValue = document.getElementById("inputText").value;
+
+            // 修改按鈕的樣式和文字
+            sendButton.style.backgroundColor = "#d3d3d3"; // 淺灰色
+            sendButton.innerText = "已發送";
+            sendButton.disabled = true; // 使按鈕失效，以防止重複點擊
             
             // 將輸入的內容發送到後端
             fetch(`/start_cite?input=${inputValue}`)
@@ -73,7 +80,7 @@
             });
         });
     </script>
-    
 
 </body>
+
 </html>

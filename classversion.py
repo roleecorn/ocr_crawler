@@ -2,6 +2,7 @@ import sqlite3
 from drive_downloader import download_driver
 from pathlib import Path
 import time
+import yaml
 import json
 from selenium.common.exceptions import NoSuchElementException
 import util
@@ -21,9 +22,10 @@ class ocr_crawler:
         if not self.db_path.exists():
             self.sql_add()
             time.sleep(1)
-        with open('cite_fathers.json', 'r') as file:
-            class_data: dict = json.load(file)
-            self.target_class: str = class_data.get(self.cite, "")
+        with open(self.home / 'cite_envs' / f"{cite}.yml", 'r') as file:
+            cite_config = yaml.safe_load(file)
+        self.target_class: str = cite_config.get('target', "")
+        self.position: dict[str, dict[str, int]] = cite_config.get('position', {})
 
     def sql_add(self) -> None:
         Debugger.info_print('new database')
