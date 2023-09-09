@@ -5,10 +5,12 @@ import yaml
 from classversion import ocr_crawler
 import threading
 from pathlib import Path
+from datetime import datetime
 
 craw: ocr_crawler = None
-app = Flask(__name__)
+app = Flask(__name__, static_folder='src', static_url_path='/src')
 home = Path.cwd()
+shops = [file.name for file in (home / 'cite_envs').iterdir() if file.is_file()]
 
 
 def background_task(mode):
@@ -29,8 +31,10 @@ def ishome():
 
 @app.route('/start_cite')
 def start_cite():
-    global craw
+    global craw, shops
     input_value = flask.request.args.get('input', default='', type=str)
+    if input_value + '.yml' not in shops:
+        return jsonify({"message": "Invalid data"}), 400
     # 進行你需要的其他操作...
     craw = ocr_crawler(input_value)
     # 返回要重定向到的URL
@@ -63,7 +67,10 @@ def yml():
 
 @app.route('/get_yml', methods=['GET'])
 def get_yml():
+    global shops
     shop = request.args.get('shop')
+    if shop+'.yml' not in shops:
+        return jsonify({"message": "Invalid data"}), 400
     with open(home / 'cite_envs' / f"{shop}.yml", 'r') as file:
         cite_config = yaml.safe_load(file)
     print(shop)
@@ -73,12 +80,15 @@ def get_yml():
 
 @app.route('/save_yml/<shop>', methods=['POST'])
 def save_yml(shop):
+    global shops
     data_to_save = request.json
 
     # 检查data_to_save是否为有效数据
     if not data_to_save:
         return jsonify({"message": "Invalid data"}), 400
-
+    if shop+'.yml' not in shops:
+        return jsonify({"message": "Invalid data"}), 400
+    data_to_save['lastupdate'] = str(datetime.now())
     # 写入文件
     with open(home / 'cite_envs' / f"{shop}.yml", 'w') as file:
         yaml.safe_dump(data_to_save, file)
