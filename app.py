@@ -74,7 +74,8 @@ def yml():
 def get_yml():
     global shops
     base_path = home / 'cite_envs'
-    shop = request.args.get('shop') + '.yml'
+    shop = util.remove_non_alphanumeric(request.args.get('shop'))
+    shop += '.yml'
     fullpath = base_path / shop
     if base_path not in fullpath.parents:
         return jsonify({"message": "Not allowed"}), 400
@@ -90,6 +91,7 @@ def get_yml():
 @app.route('/save_yml/<shop>', methods=['POST'])
 def save_yml(shop):
     global shops
+    shop = util.remove_non_alphanumeric(shop)
     data_to_save = request.json
 
     # 检查data_to_save是否为有效数据
