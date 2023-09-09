@@ -77,12 +77,12 @@ def get_yml():
     shop = request.args.get('shop') + '.yml'
     fullpath = base_path / shop
     if base_path not in fullpath.parents:
-        raise Exception("not allowed")
+        return jsonify({"message": "Not allowed"}), 400
     if shop not in shops:
         return jsonify({"message": "Invalid data"}), 400
     with open(fullpath, 'r') as file:
         cite_config = yaml.safe_load(file)
-    print(shop)
+
     # 其他的代码...
     return jsonify(cite_config)
 
@@ -95,11 +95,17 @@ def save_yml(shop):
     # 检查data_to_save是否为有效数据
     if not data_to_save:
         return jsonify({"message": "Invalid data"}), 400
-    if shop+'.yml' not in shops:
+
+    base_path = home / 'cite_envs'
+    shop = shop + '.yml'
+    fullpath = base_path / shop
+    if base_path not in fullpath.parents:
+        return jsonify({"message": "Not allowed"}), 400
+    if shop not in shops:
         return jsonify({"message": "Invalid data"}), 400
     data_to_save['lastupdate'] = str(datetime.now())
     # 写入文件
-    with open(home / 'cite_envs' / f"{shop}.yml", 'w') as file:
+    with open(fullpath, 'w') as file:
         yaml.safe_dump(data_to_save, file)
 
     return jsonify({"message": "Data saved successfully"}), 200
