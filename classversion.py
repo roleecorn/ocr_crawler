@@ -3,7 +3,6 @@ from drive_downloader import download_driver
 from pathlib import Path
 import time
 import yaml
-import json
 from selenium.common.exceptions import NoSuchElementException
 import util
 import driver_control
@@ -26,6 +25,7 @@ class ocr_crawler:
             cite_config = yaml.safe_load(file)
         self.target_class: str = cite_config.get('target', "")
         self.position: dict[str, dict[str, int]] = cite_config.get('position', {})
+        self.nextpage: dict[str, str] = cite_config.get('nextpage', {})
 
     def sql_add(self) -> None:
         Debugger.info_print('new database')
@@ -98,7 +98,39 @@ class ocr_crawler:
             self.driver.get(url=self.listsite[subcite])
         imgpath = util.check_imgpath(imgpath=self.home / self.cite,
                                      imgfile=self.site_feature[subcite])
-        self.one_page_start(imgpath=imgpath)
+        if self.nextpage['method'] == 'extend':
+            while True:
+                driver_control.go_bottom_and_wait(driver=self.driver)
+                try:
+                    buttom = self.driver.find_element(
+                        "class name", self.nextpage['item'])
+                    self.driver.execute_script(
+                        "arguments[0].scrollIntoView();", buttom)
+                    buttom.click()
+                except NoSuchElementException:
+                    Debugger.info_print('no nextpage')
+                    break
+                except Exception as e:
+                    Debugger.error_print(str(e))
+                    break
+            self.one_page_start(imgpath=imgpath)
+        elif self.nextpage['method'] == 'new':
+            while True:
+                self.one_page_start(imgpath=imgpath)
+                try:
+                    buttom = self.driver.find_element(
+                        "class name", self.nextpage['item'])
+                    self.driver.execute_script(
+                        "arguments[0].scrollIntoView();", buttom)
+                    buttom.click()
+                except NoSuchElementException:
+                    Debugger.info_print('no nextpage')
+                    break
+                except Exception as e:
+                    Debugger.error_print(str(e))
+                    break
+        else:
+            raise AttributeError
 
     def all_start(self):
         """
