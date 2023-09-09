@@ -7,6 +7,7 @@ from classversion import ocr_crawler
 import threading
 from pathlib import Path
 from datetime import datetime
+import util
 
 craw: ocr_crawler = None
 app = Flask(__name__, static_folder='src', static_url_path='/src')
@@ -34,6 +35,7 @@ def ishome():
 def start_cite():
     global craw, shops
     input_value = flask.request.args.get('input', default='', type=str)
+    input_value = util.remove_non_alphanumeric(input_value)
     if not re.match("^[A-Za-z0-9]*$", input_value):
         return jsonify({"message": "Invalid data"}), 400
     if input_value + '.yml' not in shops:
@@ -71,10 +73,14 @@ def yml():
 @app.route('/get_yml', methods=['GET'])
 def get_yml():
     global shops
-    shop = request.args.get('shop')
-    if shop+'.yml' not in shops:
+    base_path = home / 'cite_envs'
+    shop = request.args.get('shop') + '.yml'
+    fullpath = base_path / shop
+    if base_path not in fullpath.parents:
+        raise Exception("not allowed")
+    if shop not in shops:
         return jsonify({"message": "Invalid data"}), 400
-    with open(home / 'cite_envs' / f"{shop}.yml", 'r') as file:
+    with open(fullpath, 'r') as file:
         cite_config = yaml.safe_load(file)
     print(shop)
     # 其他的代码...
