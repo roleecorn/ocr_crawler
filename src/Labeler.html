@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Image Annotation</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+
+        #canvas {
+            border: 1px solid black;
+            margin-top: 20px;
+        }
+
+        #fileUpload,
+        #mySelect,
+        button {
+            margin: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <select id="mySelect">
+        <option value="money">money</option>
+        <option value="name">name</option>
+        <option value="star">star</option>
+    </select>
+    <canvas id="canvas"></canvas>
+    <input type="file" id="fileUpload" />
+    <input type="text" id="filename" placeholder="Enter filename here">
+    <button onclick="sendData()">Submit</button>
+    <script>
+        let canvas = document.getElementById('canvas');
+        let ctx = canvas.getContext('2d');
+        let rect = {};
+        let drag = false;
+        let image = new Image();
+        image.onload = function () {
+            canvas.width = image.width;
+            canvas.height = image.height;
+            ctx.drawImage(image, 0, 0, image.width, image.height);
+        }
+        document.getElementById('fileUpload').addEventListener('change', function (e) {
+            let file = e.target.files[0];
+            let reader = new FileReader();
+            reader.onload = function (e) {
+                image.src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+        });
+        function mouseDown(e) {
+            rect.startX = e.pageX - this.offsetLeft;
+            rect.startY = e.pageY - this.offsetTop;
+            drag = true;
+        }
+        function mouseUp() { drag = false; }
+        function mouseMove(e) {
+            if (drag) {
+                rect.w = (e.pageX - this.offsetLeft) - rect.startX;
+                rect.h = (e.pageY - this.offsetTop) - rect.startY;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(image, 0, 0, image.width, image.height);
+                draw();
+            }
+        }
+        function draw() {
+            ctx.strokeStyle = 'red';
+            ctx.strokeRect(rect.startX, rect.startY, rect.w, rect.h);
+        }
+        function sendData() {
+            // JSON 物件
+            var data = {
+                name: document.getElementById("mySelect").value,
+                X: rect.startX,
+                Y: rect.startY,
+                w: rect.w,
+                h: rect.h
+            };
+            // 轉換 JSON 物件為字串
+            var jsonString = JSON.stringify(data);
+            // 創建一個 blob 物件
+            var blob = new Blob([jsonString], { type: "application/json" });
+            // 創建一個下載的 URL
+            var url = URL.createObjectURL(blob);
+            // 創建一個新的 <a> 元素
+            var a = document.createElement("a");
+            // 將 <a> 元素的 href 屬性設定為創建的 URL
+            a.href = url;
+            // 設定下載的檔案名
+            var filename = document.getElementById('filename').value;
+            if (filename === '') {
+                filename = 'data'; // 若使用者未輸入，則設定預設檔名為 'data'
+            }
+            a.download = filename+'_'+document.getElementById("mySelect").value+'.json';
+            // 添加 <a> 元素到 DOM 中
+            document.body.appendChild(a);
+            // 觸發 <a> 元素的點擊事件
+            a.click();
+            // 從 DOM 中移除 <a> 元素
+            document.body.removeChild(a);
+        }
+        canvas.addEventListener('mousedown', mouseDown, false);
+        canvas.addEventListener('mouseup', mouseUp, false);
+        canvas.addEventListener('mousemove', mouseMove, false);
+    </script>
+</body>
+
+</html>

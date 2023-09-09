@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>輸入與發送</title>
+        <!-- <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 30px;  /* 設置體的字體大小為30px */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+    
+        .input-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            width: 50%;
+        }
+    
+        input[type="text"] {
+            font-size: 30px;  /* 設置輸入框的字體大小為30px */
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+    
+        button {
+            font-size: 30px;  /* 設置按鈕的字體大小為30px */
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            background-color: #3498db;
+            color: white;
+            border-radius: 5px;
+        }
+    
+        button:hover {
+            background-color: #2980b9;
+        }
+    
+    </style> -->
+        <link href="/src/homestyle.css" rel="stylesheet">
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const sendButton = document.getElementById("sendButton");
+                sendButton.addEventListener("click", function() {
+                    let inputValue = document.getElementById("inputText").value;
+    
+                    // 修改按鈕的樣式和文字
+                    sendButton.style.backgroundColor = "#d3d3d3"; // 淺灰色
+                    sendButton.innerText = "已發送";
+                    sendButton.disabled = true; // 使按鈕失效，以防止重複點擊
+    
+                    // 將輸入的內容發送到後端
+                    fetch(`/start_cite?input=${inputValue}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // 使用返回的URL進行頁面跳轉
+                        window.location.href = data.redirect_url;
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                });
+            });
+        </script>
+
+    </head>
+    <body>
+        
+        <div class="input-container">
+            <input type="text" id="inputText" placeholder="輸入商店名稱...">
+            <button id="sendButton">發送</button>
+        </div>
+
+        <ul>
+            <li><a href="yml">
+                    <img src="/src/edit.png" alt="Description 1">
+                    編輯網站資料</a>
+            </li>
+            <li>
+                <a href="https://inloop.github.io/sqlite-viewer/">
+                    <img src="/src/database.png" alt="Description 2">
+                    資料庫查詢功能
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/roleecorn/ocr_crawler/issues">
+                    <img src="/src/web.ico" alt="Description 3">
+                    問題回報
+                </a>
+            </li>
+
+            <li><a href="/src/Labeler.html">
+                    <img src="/src/price-tag.png" alt="Description 4">
+                    標記物件</a>
+            </li>
+        </ul>
+
+    </body>
+
+</html>
