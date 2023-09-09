@@ -12,6 +12,7 @@
             console.log(shop);
             $.get("/get_yml?shop="+shop, function(data) {
                 $('#lastupdate').text(data['lastupdate']);
+                $('#Next_page').val(data['nextpage']);
                 $('#target').val(data['target']);
         
                 $('#money_x').val(data['position']['money']['X']);
@@ -35,6 +36,7 @@
             const data = {
                 lastupdate: $('#lastupdate').val(),
                 target: $('#target').val(),
+                nextpage: $('#Next_page').val(),
                 position: {
                     money: {
                         X: parseInt($('#money_x').val()),
@@ -137,6 +139,10 @@
                 <div class="position-group">
                     <label>Target:</label>
                     <input type="text" id="target" />
+                </div>
+                <div class="position-group">
+                    <label>Next page:</label>
+                    <input type="text" id="Next_page" />
                 </div>
                 <div class="position-group">
                     <label>Last Update:</label>

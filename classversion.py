@@ -61,6 +61,9 @@ class ocr_crawler:
             self.driver.close()
 
     def one_page_start(self, imgpath: Path):
+        """
+        執行一個頁面的截圖
+        """
         time.sleep(5)
         driver_control.scroll_to_bottom_and_wait(driver=self.driver)
         try:
@@ -73,6 +76,9 @@ class ocr_crawler:
             tmp = util.capture(ele=element, path=imgpath)
 
     def test_start(self):
+        """
+        執行第一個網址的執行
+        """
         Debugger.info_print('test start')
         self.driver.get(url=self.listsite[0])
         time.sleep(3)
@@ -83,6 +89,9 @@ class ocr_crawler:
         self.one_page_start(imgpath=imgpath)
 
     def regular_start(self, subcite: int):
+        """
+        執行選定目標編號網址
+        """
         Debugger.info_print(f'regular start {self.site_feature[subcite]}')
         self.driver.get(url=self.listsite[subcite])
         if self.driver.current_url != self.listsite[subcite]:
@@ -92,6 +101,9 @@ class ocr_crawler:
         self.one_page_start(imgpath=imgpath)
 
     def all_start(self):
+        """
+        遍歷所有網址進行一次regular_start
+        """
         start = time.time()
         for i in range(len(self.listsite)):
             self.regular_start(i)
@@ -101,6 +113,7 @@ class ocr_crawler:
     def shot_all_classes(self):
         self.driver.get(url=self.listsite[0])
         time.sleep(5)
+        driver_control.scroll_to_bottom_and_wait(driver=self.driver)
         # 使用 XPath 選擇器來選擇所有有 class 屬性的元素
         elements = driver_control.get_all_classes(self.driver)
 
@@ -108,9 +121,11 @@ class ocr_crawler:
             try:
                 ele = self.driver.find_element(
                     "class name", element)
-            except Exception:
+            except NoSuchElementException:
                 continue
+            except Exception as e:
+                Debugger.error_print(str(e))
             try:
                 util.capture(ele=ele, path=self.home / 'search')
-            except Exception:
-                pass
+            except Exception as e:
+                Debugger.error_print(str(e))
