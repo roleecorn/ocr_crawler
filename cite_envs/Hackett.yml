@@ -1,0 +1,18 @@
+lastupdate: 2023-09-08
+target: c-product-tile
+position:
+  money: 
+    X: 169
+    Y: 484
+    w: -166
+    h: -18
+  title: 
+    X: 4
+    Y: 424
+    w: 332
+    h: 38
+  star: 
+    X: 127
+    Y: 509
+    w: -38
+    h: -29
