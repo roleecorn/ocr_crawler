@@ -64,7 +64,7 @@
                     .then(response => response.json())
                     .then(data => {
                         // 使用返回的URL進行頁面跳轉
-                        window.location.href = data.redirect_url;
+                        window.location.href =  '/src/index.html';
                     })
                     .catch(error => {
                         console.error('Error:', error);
@@ -82,7 +82,7 @@
         </div>
 
         <ul>
-            <li><a href="yml">
+            <li><a href="/src/yml.html">
                     <img src="/src/edit.png" alt="Description 1">
                     編輯網站資料</a>
             </li>
