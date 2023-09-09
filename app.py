@@ -2,6 +2,7 @@ from flask import Flask, render_template, jsonify, url_for, request
 import flask
 import time
 import yaml
+import re
 from classversion import ocr_crawler
 import threading
 from pathlib import Path
@@ -33,6 +34,8 @@ def ishome():
 def start_cite():
     global craw, shops
     input_value = flask.request.args.get('input', default='', type=str)
+    if not re.match("^[A-Za-z0-9]*$", input_value):
+        return jsonify({"message": "Invalid data"}), 400
     if input_value + '.yml' not in shops:
         return jsonify({"message": "Invalid data"}), 400
     # 進行你需要的其他操作...
