@@ -7,6 +7,7 @@ from selenium.common.exceptions import NoSuchElementException
 import util
 import driver_control
 from debugger import Debugger
+from datetime import datetime
 
 
 class ocr_crawler:
@@ -18,6 +19,7 @@ class ocr_crawler:
         self.driver = None
         self.db_path = self.home / 'sql' / f"{cite}.db"
         self.read_csv()
+        self.current_date = str(datetime.now().date())
         if not self.db_path.exists():
             self.sql_add()
             time.sleep(1)
@@ -84,8 +86,8 @@ class ocr_crawler:
         time.sleep(3)
         if self.driver.current_url != self.listsite[0]:
             self.driver.get(url=self.listsite[0])
-        imgpath = util.check_imgpath(imgpath=self.home / self.cite,
-                                     imgfile=['test'])
+        p = self.home / 'image' / self.cite / self.current_date
+        imgpath = util.check_imgpath(imgpath=p, imgfile=['test'])
         self.one_page_start(imgpath=imgpath)
 
     def regular_start(self, subcite: int):
@@ -96,7 +98,8 @@ class ocr_crawler:
         self.driver.get(url=self.listsite[subcite])
         if self.driver.current_url != self.listsite[subcite]:
             self.driver.get(url=self.listsite[subcite])
-        imgpath = util.check_imgpath(imgpath=self.home / self.cite,
+        p = self.home / 'image' / self.cite / self.current_date
+        imgpath = util.check_imgpath(imgpath=p,
                                      imgfile=self.site_feature[subcite])
         if self.nextpage['method'] == 'extend':
             while True:
