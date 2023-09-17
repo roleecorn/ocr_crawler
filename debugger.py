@@ -1,8 +1,10 @@
 import requests
+import os
 import json
 import time
 import sys
-from config import DC_WEBHOOK
+from dotenv import load_dotenv
+load_dotenv()
 
 
 class Debugger(object):
@@ -49,7 +51,7 @@ class Debugger(object):
         headers = {
             'Content-Type': 'application/json'
         }
-        response = requests.post(DC_WEBHOOK,
+        response = requests.post(os.getenv('DC_WEBHOOK'),
                                  data=json.dumps(data), headers=headers)
         if response.status_code == 204:
             print("訊息已成功發送到Discord Webhook！")

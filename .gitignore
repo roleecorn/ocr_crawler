@@ -13,3 +13,6 @@ driver_path
 *.json
 !src/*
 config.py
+Application
+.env
+chromedriver.exe

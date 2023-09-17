@@ -1,13 +1,16 @@
 import sqlite3
-from drive_downloader import download_driver
 from pathlib import Path
 import time
 import yaml
 from selenium.common.exceptions import NoSuchElementException
 import util
 import driver_control
+import os
 from debugger import Debugger
 from datetime import datetime
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 class ocr_crawler:
@@ -15,7 +18,9 @@ class ocr_crawler:
         self.cite = cite
         self.home = Path.cwd()
         self.test = test
-        self.driverpath = download_driver(self.home)
+        # self.driverpath = self.home / 'chromedriver.exe'
+        self.driverpath = self.home / Path(os.getenv("DriverPath"))
+        self.chromepath = self.home / Path(os.getenv("Chromepath"))
         self.driver = None
         self.db_path = self.home / 'sql' / f"{cite}.db"
         self.read_csv()
@@ -56,7 +61,8 @@ class ocr_crawler:
 
     def new_driver(self):
         Debugger.info_print('new driver')
-        self.driver = util.new_driver(self.driverpath)
+        self.driver = util.new_driver(dpath=self.driverpath,
+                                      cpath=self.chromepath)
 
     def close(self):
         if self.driver:
