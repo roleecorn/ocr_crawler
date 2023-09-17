@@ -1,8 +1,6 @@
 lastupdate: 2023-09-08
-target: tile_wrapper_outer
-nextpage: 
-  item: load_more
-  method: extend
+target: product-card
+nextpage: null
 position:
   money: 
     X: 169

@@ -5,12 +5,13 @@ from pathlib import Path
 import sys
 
 
-def new_driver(dpath: Path) -> webdriver.Chrome:
+def new_driver(dpath: Path, cpath: Path) -> webdriver.Chrome:
     '''開啟瀏覽器視窗(Chrome)'''
     print('執行開始')
 
     options = webdriver.ChromeOptions()
     options.add_experimental_option('excludeSwitches', ['enable-logging'])
+    options.binary_location = str(cpath)
     try:
         s = Service(executable_path=dpath.resolve())
         driver = webdriver.Chrome(service=s, options=options)

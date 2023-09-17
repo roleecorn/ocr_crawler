@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, url_for, request
+from flask import Flask, render_template, jsonify, request
 import flask
 import time
 import yaml
@@ -43,12 +43,8 @@ def start_cite():
     # 進行你需要的其他操作...
     craw = ocr_crawler(input_value)
     # 返回要重定向到的URL
-    return jsonify(redirect_url=url_for('index'))
+    return jsonify(redirect_url='/src/index.html')
 
-
-@app.route('/index')
-def index():
-    return render_template('index.html')
 
 
 @app.route('/run_test')
@@ -64,10 +60,6 @@ def run_all():
     thread.start()
     return jsonify(message="完整執行開始")
 
-
-@app.route('/yml', methods=['GET'])
-def yml():
-    return render_template('yml.html')
 
 
 @app.route('/get_yml', methods=['GET'])

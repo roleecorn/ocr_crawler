@@ -1,8 +1,6 @@
 lastupdate: 2023-09-08
-target: tile_wrapper_outer
-nextpage: 
-  item: load_more
-  method: extend
+target: c-product-tile-grid__item
+nextpage: null
 position:
   money: 
     X: 169

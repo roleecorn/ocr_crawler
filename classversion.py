@@ -1,13 +1,16 @@
 import sqlite3
-from drive_downloader import download_driver
 from pathlib import Path
 import time
 import yaml
-import json
 from selenium.common.exceptions import NoSuchElementException
 import util
 import driver_control
+import os
 from debugger import Debugger
+from datetime import datetime
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 class ocr_crawler:
@@ -15,10 +18,13 @@ class ocr_crawler:
         self.cite = cite
         self.home = Path.cwd()
         self.test = test
-        self.driverpath = download_driver(self.home)
+        # self.driverpath = self.home / 'chromedriver.exe'
+        self.driverpath = self.home / Path(os.getenv("DriverPath"))
+        self.chromepath = self.home / Path(os.getenv("Chromepath"))
         self.driver = None
         self.db_path = self.home / 'sql' / f"{cite}.db"
         self.read_csv()
+        self.current_date = str(datetime.now().date())
         if not self.db_path.exists():
             self.sql_add()
             time.sleep(1)
@@ -26,6 +32,7 @@ class ocr_crawler:
             cite_config = yaml.safe_load(file)
         self.target_class: str = cite_config.get('target', "")
         self.position: dict[str, dict[str, int]] = cite_config.get('position', {})
+        self.nextpage: dict[str, str] = cite_config.get('nextpage', {})
 
     def sql_add(self) -> None:
         Debugger.info_print('new database')
@@ -54,13 +61,17 @@ class ocr_crawler:
 
     def new_driver(self):
         Debugger.info_print('new driver')
-        self.driver = util.new_driver(self.driverpath)
+        self.driver = util.new_driver(dpath=self.driverpath,
+                                      cpath=self.chromepath)
 
     def close(self):
         if self.driver:
             self.driver.close()
 
     def one_page_start(self, imgpath: Path):
+        """
+        執行一個頁面的截圖
+        """
         time.sleep(5)
         driver_control.scroll_to_bottom_and_wait(driver=self.driver)
         try:
@@ -73,25 +84,67 @@ class ocr_crawler:
             tmp = util.capture(ele=element, path=imgpath)
 
     def test_start(self):
+        """
+        執行第一個網址的執行
+        """
         Debugger.info_print('test start')
         self.driver.get(url=self.listsite[0])
         time.sleep(3)
         if self.driver.current_url != self.listsite[0]:
             self.driver.get(url=self.listsite[0])
-        imgpath = util.check_imgpath(imgpath=self.home / self.cite,
-                                     imgfile=['test'])
+        p = self.home / 'image' / self.cite / self.current_date
+        imgpath = util.check_imgpath(imgpath=p, imgfile=['test'])
         self.one_page_start(imgpath=imgpath)
 
     def regular_start(self, subcite: int):
+        """
+        執行選定目標編號網址
+        """
         Debugger.info_print(f'regular start {self.site_feature[subcite]}')
         self.driver.get(url=self.listsite[subcite])
         if self.driver.current_url != self.listsite[subcite]:
             self.driver.get(url=self.listsite[subcite])
-        imgpath = util.check_imgpath(imgpath=self.home / self.cite,
+        p = self.home / 'image' / self.cite / self.current_date
+        imgpath = util.check_imgpath(imgpath=p,
                                      imgfile=self.site_feature[subcite])
-        self.one_page_start(imgpath=imgpath)
+        if self.nextpage['method'] == 'extend':
+            while True:
+                driver_control.go_bottom_and_wait(driver=self.driver)
+                try:
+                    buttom = self.driver.find_element(
+                        "class name", self.nextpage['item'])
+                    self.driver.execute_script(
+                        "arguments[0].scrollIntoView();", buttom)
+                    buttom.click()
+                except NoSuchElementException:
+                    Debugger.info_print('no nextpage')
+                    break
+                except Exception as e:
+                    Debugger.error_print(str(e))
+                    break
+            self.one_page_start(imgpath=imgpath)
+        elif self.nextpage['method'] == 'new':
+            while True:
+                self.one_page_start(imgpath=imgpath)
+                try:
+                    buttom = self.driver.find_element(
+                        "class name", self.nextpage['item'])
+                    self.driver.execute_script(
+                        "arguments[0].scrollIntoView();", buttom)
+                    buttom.click()
+                except NoSuchElementException:
+                    Debugger.info_print('no nextpage')
+                    break
+                except Exception as e:
+                    Debugger.error_print(str(e))
+                    break
+        else:
+            raise AttributeError
 
     def all_start(self):
+        """
+        遍歷所有網址進行一次regular_start
+        """
         start = time.time()
         for i in range(len(self.listsite)):
             self.regular_start(i)
@@ -101,6 +154,7 @@ class ocr_crawler:
     def shot_all_classes(self):
         self.driver.get(url=self.listsite[0])
         time.sleep(5)
+        driver_control.scroll_to_bottom_and_wait(driver=self.driver)
         # 使用 XPath 選擇器來選擇所有有 class 屬性的元素
         elements = driver_control.get_all_classes(self.driver)
 
@@ -108,9 +162,11 @@ class ocr_crawler:
             try:
                 ele = self.driver.find_element(
                     "class name", element)
-            except Exception:
+            except NoSuchElementException:
                 continue
+            except Exception as e:
+                Debugger.error_print(str(e))
             try:
                 util.capture(ele=ele, path=self.home / 'search')
-            except Exception:
-                pass
+            except Exception as e:
+                Debugger.error_print(str(e))
