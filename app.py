@@ -26,6 +26,8 @@ def background_task(mode):
         craw.all_start()
     elif mode == 'search':
         craw.shot_all_classes()
+    elif mode == 'ocr':
+        craw.all_start(ocr=True)
     craw.close()
 
 
@@ -67,8 +69,14 @@ def run_all():
 def run_search():
     thread = threading.Thread(target=background_task, args=('search',))
     thread.start()
-    return jsonify(message="開始分析網頁元素。請稍候...\n請確保範例網頁盡可能的小")
+    return jsonify(message="開始分析網頁元素。請稍候...\n這個過程可能會很久，請確保範例網頁盡可能的小")
 
 
+@app.route('/run_ocr')
+def run_ocr():
+    thread = threading.Thread(target=background_task, args=('ocr',))
+    thread.start()
+    return jsonify(message="進行圖片光學解析")
+# run_ocr
 if __name__ == '__main__':
     app.run(debug=False)

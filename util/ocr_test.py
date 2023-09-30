@@ -1,12 +1,12 @@
 from PIL import Image
 import pytesseract
 import os
-with open('ocr_path.txt', mode='r') as f:
-    tmp = f.read()
+from pathlib import Path
+
 pytesseract.pytesseract.tesseract_cmd = os.getenv('TessartPath')
 
 
-def Ocr(img, x, y, w, h):
+def Ocr(img: Path, posit: dict):
     """
     輸入一張圖片與對象範圍，回傳範圍內的文字
     - x: X座標
@@ -14,6 +14,7 @@ def Ocr(img, x, y, w, h):
     - w: 寬度
     - h: 高度
     """
+    x, y, w, h = posit['X'], posit['Y'], posit['w'], posit['h']
     if w < 0:
         x, w = x+w, -w
     if h < 0:

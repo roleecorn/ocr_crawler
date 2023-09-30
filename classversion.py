@@ -35,6 +35,8 @@ class ocr_crawler:
         self.position: dict[str, dict[str, int]
                             ] = cite_config.get('position', {})
         self.nextpage: dict[str, str] = cite_config.get('nextpage', {})
+        # self.SESSION = sqlite3.connect(self.db_path)
+        self.version = int(time.time())
 
     def sql_add(self) -> None:
         Debugger.info_print('new database')
@@ -70,7 +72,8 @@ class ocr_crawler:
         if self.driver:
             self.driver.close()
 
-    def one_page_start(self, imgpath: Path):
+    def one_page_start(self, imgpath: Path, img_features: list[str],
+                       ocr: bool = False):
         """
         執行一個頁面的截圖
         """
@@ -81,9 +84,35 @@ class ocr_crawler:
                 "class name", self.target_class)
         except NoSuchElementException:
             Debugger.error_print('element not find in target_element')
-
+        SESSION = sqlite3.connect(self.db_path)
         for element in target_elements:
             tmp = util.capture(ele=element, path=imgpath)
+            datas = {
+                # "price": 100.50,
+                # "oriprice": 150.00,
+                "imgcode": tmp,
+                # "facturer": "ABC Company",
+                # "feature": "Waterproof",
+                # "color": "Blue",
+                # "name": "Cool Shoe",
+                # "star": 4.5,
+                "path": '/'.join(img_features),
+                # "sex": 1,
+                # # Assuming 0 for Female, 1 for Male, -1 for Unknown
+                "ver": self.version
+            }
+            if ocr:
+                datas["price"] = util.Ocr(img=imgpath/tmp,
+                                          posit=self.position['money'])
+                datas["name"] = util.Ocr(img=imgpath/tmp,
+                                         posit=self.position['title'])
+                datas["star"] = util.Ocr(img=imgpath/tmp,
+                                         posit=self.position['star'])
+            clo = util.cloth(datas=datas)
+            clo.writedb(db=SESSION, tablename=self.cite)
+            del clo
+        SESSION.commit()
+        SESSION.close()
 
     def test_start(self):
         """
@@ -96,19 +125,20 @@ class ocr_crawler:
             self.driver.get(url=self.listsite[0])
         p = self.home / 'image' / self.cite / self.current_date
         imgpath = util.check_imgpath(imgpath=p, imgfile=['test'])
-        self.one_page_start(imgpath=imgpath)
+        self.one_page_start(imgpath=imgpath, img_features=['test'])
 
-    def regular_start(self, subcite: int):
+    def regular_start(self, subcite: int, ocr: bool = False):
         """
         執行選定目標編號網址
         """
-        Debugger.info_print(f'regular start {self.site_feature[subcite]}')
+        img_features = self.site_feature[subcite]
+        Debugger.info_print(f'regular start {img_features}')
         self.driver.get(url=self.listsite[subcite])
         if self.driver.current_url != self.listsite[subcite]:
             self.driver.get(url=self.listsite[subcite])
         p = self.home / 'image' / self.cite / self.current_date
         imgpath = util.check_imgpath(imgpath=p,
-                                     imgfile=self.site_feature[subcite])
+                                     imgfile=img_features)
         if self.nextpage['method'] == 'extend':
             while True:
                 driver_control.go_bottom_and_wait(driver=self.driver)
@@ -124,10 +154,12 @@ class ocr_crawler:
                 except Exception as e:
                     Debugger.error_print(str(e))
                     break
-            self.one_page_start(imgpath=imgpath)
+            self.one_page_start(
+                imgpath=imgpath, img_features=img_features, ocr=ocr)
         elif self.nextpage['method'] == 'new':
             while True:
-                self.one_page_start(imgpath=imgpath)
+                self.one_page_start(
+                    imgpath=imgpath, img_features=img_features, ocr=ocr)
                 try:
                     buttom = self.driver.find_element(
                         "class name", self.nextpage['item'])
@@ -143,13 +175,13 @@ class ocr_crawler:
         else:
             raise AttributeError
 
-    def all_start(self):
+    def all_start(self, ocr: bool = False):
         """
         遍歷所有網址進行一次regular_start
         """
         start = time.time()
         for i in range(len(self.listsite)):
-            self.regular_start(i)
+            self.regular_start(i, ocr=ocr)
         end = time.time()
         Debugger.dc_print(f'all start end cost {end - start}(s)')
 
