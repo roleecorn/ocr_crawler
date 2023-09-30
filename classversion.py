@@ -3,6 +3,7 @@ from pathlib import Path
 import time
 import yaml
 from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import ElementNotInteractableException
 import util
 import driver_control
 import os
@@ -31,7 +32,8 @@ class ocr_crawler:
         with open(self.home / 'cite_envs' / f"{cite}.yml", 'r') as file:
             cite_config = yaml.safe_load(file)
         self.target_class: str = cite_config.get('target', "")
-        self.position: dict[str, dict[str, int]] = cite_config.get('position', {})
+        self.position: dict[str, dict[str, int]
+                            ] = cite_config.get('position', {})
         self.nextpage: dict[str, str] = cite_config.get('nextpage', {})
 
     def sql_add(self) -> None:
@@ -152,12 +154,16 @@ class ocr_crawler:
         Debugger.dc_print(f'all start end cost {end - start}(s)')
 
     def shot_all_classes(self):
+        time.sleep(2)
+        self.new_driver()
         self.driver.get(url=self.listsite[0])
         time.sleep(5)
         driver_control.scroll_to_bottom_and_wait(driver=self.driver)
         # 使用 XPath 選擇器來選擇所有有 class 屬性的元素
         elements = driver_control.get_all_classes(self.driver)
-
+        search_path = self.home / 'search'
+        if not search_path.exists():
+            search_path.mkdir(parents=True, exist_ok=True)
         for element in elements:
             try:
                 ele = self.driver.find_element(
@@ -165,8 +171,11 @@ class ocr_crawler:
             except NoSuchElementException:
                 continue
             except Exception as e:
-                Debugger.error_print(str(e))
+                # Debugger.error_print(str(e))
+                continue
             try:
-                util.capture(ele=ele, path=self.home / 'search')
+                util.capture(ele=ele, path=search_path, name=element)
+            except ElementNotInteractableException:
+                continue
             except Exception as e:
                 Debugger.error_print(str(e))

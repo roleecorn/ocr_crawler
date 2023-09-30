@@ -24,6 +24,8 @@ def background_task(mode):
         craw.test_start()
     elif mode == 'all':
         craw.all_start()
+    elif mode == 'search':
+        craw.shot_all_classes()
     craw.close()
 
 
@@ -59,6 +61,13 @@ def run_all():
     thread = threading.Thread(target=background_task, args=('all',))
     thread.start()
     return jsonify(message="完整執行開始")
+
+
+@app.route('/run_search')
+def run_search():
+    thread = threading.Thread(target=background_task, args=('search',))
+    thread.start()
+    return jsonify(message="開始分析網頁元素。請稍候...\n請確保範例網頁盡可能的小")
 
 
 if __name__ == '__main__':
