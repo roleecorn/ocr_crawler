@@ -20,8 +20,8 @@ class ocr_crawler:
         self.home = Path.cwd()
         self.test = test
         # self.driverpath = self.home / 'chromedriver.exe'
-        self.driverpath = self.home / Path(os.getenv("DriverPath"))
-        self.chromepath = self.home / Path(os.getenv("Chromepath"))
+        self.driverpath = Path(os.getenv("DriverPath"))
+        self.chromepath = Path(os.getenv("Chromepath"))
         self.driver = None
         self.db_path = self.home / 'sql' / f"{cite}.db"
         self.read_csv()
