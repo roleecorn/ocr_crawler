@@ -1,17 +1,23 @@
+# Standard library imports
 import sqlite3
 from pathlib import Path
+from datetime import datetime
+import os
 import time
-import yaml
+
+# Third-party imports
+from dotenv import load_dotenv
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import ElementNotInteractableException
+import yaml
+
+# Load environment variables (special case)
+load_dotenv()
+
+# Local application imports that depend on environment variables
 import util
 import driver_control
-import os
 from debugger import Debugger
-from datetime import datetime
-from dotenv import load_dotenv
-
-load_dotenv()
 
 
 class ocr_crawler:

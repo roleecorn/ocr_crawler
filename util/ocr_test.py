@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 
 pytesseract.pytesseract.tesseract_cmd = os.getenv('TessartPath')
+print(pytesseract.pytesseract.tesseract_cmd)
 
 
 def Ocr(img: Path, posit: dict):
@@ -15,13 +16,23 @@ def Ocr(img: Path, posit: dict):
     - h: 高度
     """
     x, y, w, h = posit['X'], posit['Y'], posit['w'], posit['h']
+
     if w < 0:
-        x, w = x+w, -w
+        x, w = x + w, -w
     if h < 0:
-        y, h = y+h, -h
+        y, h = y + h, -h
+
     img2 = Image.open(img)
-    img2 = img2.crop([x, y, x+w, y+h])
+
+    # Ensure cropping is within image boundaries
+    x = max(0, x)
+    y = max(0, y)
+    w = min(img2.width - x, w)
+    h = min(img2.height - y, h)
+
+    img2 = img2.crop([x, y, x + w, y + h])
     # img2.show()
+
     return pytesseract.image_to_string(img2)
 
 

@@ -5,17 +5,17 @@ nextpage:
   method: extend
 position:
   money: 
-    X: 169
-    Y: 484
-    w: -166
-    h: -18
+    X: 116
+    Y: 460
+    w: -114
+    h: -14
   title: 
     X: 4
     Y: 424
     w: 332
     h: 38
   star: 
-    X: 127
-    Y: 509
-    w: -38
-    h: -29
+    X: 116
+    Y: 485
+    w: -27
+    h: -22
