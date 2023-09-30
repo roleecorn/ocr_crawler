@@ -16,3 +16,4 @@ config.py
 Application
 .env
 chromedriver.exe
+Tesseract-OCR/

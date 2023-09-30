@@ -1,18 +1,19 @@
 from flask import Flask, render_template, jsonify, request
 import flask
 import time
-import yaml
 import re
 from classversion import ocr_crawler
 import threading
 from pathlib import Path
-from datetime import datetime
+from views.ymls import ymlroute
 import util
 
 craw: ocr_crawler = None
 app = Flask(__name__, static_folder='src', static_url_path='/src')
+app.register_blueprint(ymlroute)
 home = Path.cwd()
-shops = [file.name for file in (home / 'cite_envs').iterdir() if file.is_file()]
+shops = [file.name for file in (
+    home / 'cite_envs').iterdir() if file.is_file()]
 
 
 def background_task(mode):
@@ -23,6 +24,10 @@ def background_task(mode):
         craw.test_start()
     elif mode == 'all':
         craw.all_start()
+    elif mode == 'search':
+        craw.shot_all_classes()
+    elif mode == 'ocr':
+        craw.all_start(ocr=True)
     craw.close()
 
 
@@ -46,7 +51,6 @@ def start_cite():
     return jsonify(redirect_url='/src/index.html')
 
 
-
 @app.route('/run_test')
 def run_test():
     thread = threading.Thread(target=background_task, args=('test',))
@@ -61,49 +65,18 @@ def run_all():
     return jsonify(message="完整執行開始")
 
 
-
-@app.route('/get_yml', methods=['GET'])
-def get_yml():
-    global shops
-    base_path = home / 'cite_envs'
-    shop = util.remove_non_alphanumeric(request.args.get('shop'))
-    shop += '.yml'
-    fullpath = base_path / shop
-    if base_path not in fullpath.parents:
-        return jsonify({"message": "Not allowed"}), 400
-    if shop not in shops:
-        return jsonify({"message": "Invalid data"}), 400
-    with open(fullpath, 'r') as file:
-        cite_config = yaml.safe_load(file)
-
-    # 其他的代码...
-    return jsonify(cite_config)
+@app.route('/run_search')
+def run_search():
+    thread = threading.Thread(target=background_task, args=('search',))
+    thread.start()
+    return jsonify(message="開始分析網頁元素。請稍候...\n這個過程可能會很久，請確保範例網頁盡可能的小")
 
 
-@app.route('/save_yml/<shop>', methods=['POST'])
-def save_yml(shop):
-    global shops
-    shop = util.remove_non_alphanumeric(shop)
-    data_to_save = request.json
-
-    # 检查data_to_save是否为有效数据
-    if not data_to_save:
-        return jsonify({"message": "Invalid data"}), 400
-
-    base_path = home / 'cite_envs'
-    shop = shop + '.yml'
-    fullpath = base_path / shop
-    if base_path not in fullpath.parents:
-        return jsonify({"message": "Not allowed"}), 400
-    if shop not in shops:
-        return jsonify({"message": "Invalid data"}), 400
-    data_to_save['lastupdate'] = str(datetime.now())
-    # 写入文件
-    with open(fullpath, 'w') as file:
-        yaml.safe_dump(data_to_save, file)
-
-    return jsonify({"message": "Data saved successfully"}), 200
-
-
+@app.route('/run_ocr')
+def run_ocr():
+    thread = threading.Thread(target=background_task, args=('ocr',))
+    thread.start()
+    return jsonify(message="進行圖片光學解析")
+# run_ocr
 if __name__ == '__main__':
     app.run(debug=False)

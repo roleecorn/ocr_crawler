@@ -13,7 +13,7 @@ def capture(ele: WebElement, path: Path, name: str=""):
     else:
         filename = name + '.png'
     ele.screenshot(str(path / filename))
-    return path / filename
+    return filename
 
 
 if __name__ == "__main__":

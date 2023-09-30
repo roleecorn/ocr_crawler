@@ -15,6 +15,7 @@ from .new_driver import new_driver
 from .check_imgpath import check_imgpath
 from .ele_capture import capture
 from .ocr_test import Ocr
+from .cloth import cloth
 
 __all__ = ["read_csv",
            "new_driver",
