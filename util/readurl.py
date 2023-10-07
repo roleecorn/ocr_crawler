@@ -1,9 +1,10 @@
 from pathlib import Path
 import util
+from typing import List, Tuple
 
 
 def read_csv(file: Path, encoding: str = 'utf-8-sig'
-             ) -> tuple[list[str], list[list[str]]]:
+             ) -> Tuple[List[str], List[List[str]]]:
     """
     從指定路徑的CSV檔案中讀取數據。
 

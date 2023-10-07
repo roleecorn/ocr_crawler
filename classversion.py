@@ -4,7 +4,7 @@ from pathlib import Path
 from datetime import datetime
 import os
 import time
-
+from typing import List
 # Third-party imports
 from dotenv import load_dotenv
 from selenium.common.exceptions import NoSuchElementException
@@ -79,7 +79,7 @@ class ocr_crawler:
         if self.driver:
             self.driver.close()
 
-    def one_page_start(self, imgpath: Path, img_features: list[str],
+    def one_page_start(self, imgpath: Path, img_features: List[str],
                        ocr: bool = False):
         """
         執行一個頁面的截圖

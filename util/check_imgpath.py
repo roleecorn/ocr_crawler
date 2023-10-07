@@ -1,7 +1,8 @@
 from pathlib import Path
+from typing import List
 
 
-def check_imgpath(imgpath: Path, imgfile: list[str]) -> Path:
+def check_imgpath(imgpath: Path, imgfile: List[str]) -> Path:
     Path(imgpath).mkdir(parents=True, exist_ok=True)
 
     for afilename in imgfile:
