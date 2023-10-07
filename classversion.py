@@ -31,7 +31,9 @@ class ocr_crawler:
         self.driver = None
         self.db_path = self.home / 'sql' / f"{cite}.db"
         self.read_csv()
-        self.current_date = str(datetime.now().date())
+        current_time = datetime.now()
+        self.current_date = str(current_time.date())
+        self.version = int(current_time.timestamp())
         if not self.db_path.exists():
             self.sql_add()
             time.sleep(1)
@@ -42,7 +44,6 @@ class ocr_crawler:
                             ] = cite_config.get('position', {})
         self.nextpage: dict[str, str] = cite_config.get('nextpage', {})
         # self.SESSION = sqlite3.connect(self.db_path)
-        self.version = int(time.time())
 
     def sql_add(self) -> None:
         Debugger.info_print('new database')
