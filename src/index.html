@@ -51,9 +51,7 @@
         </div>
 
         <script>
-    // 這裡可以為每一個按鈕添加事件監聽器
     document.getElementById("runTest").addEventListener("click", function() {
-        // 你的功能代碼
         fetch(`/run_test`)
         .then(response => response.json())
                 .then(data => {
@@ -65,7 +63,6 @@
     });
 
     document.getElementById("runAll").addEventListener("click", function() {
-        // 你的功能代碼
         fetch(`/run_all`)
         .then(response => response.json())
                 .then(data => {
@@ -88,8 +85,6 @@
     });
 
     document.getElementById("classFind").addEventListener("click", function() {
-        // 你的功能代碼
-        // 你的功能代碼
         fetch(`/run_search`)
         .then(response => response.json())
                 .then(data => {
