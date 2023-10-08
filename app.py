@@ -1,4 +1,5 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify
+from flask import send_from_directory
 import flask
 import time
 import re
@@ -51,6 +52,11 @@ def start_cite():
     return jsonify(redirect_url='/src/index.html')
 
 
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(home / 'src', 'web.ico')
+
+
 @app.route('/run_test')
 def run_test():
     thread = threading.Thread(target=background_task, args=('test',))
@@ -77,6 +83,8 @@ def run_ocr():
     thread = threading.Thread(target=background_task, args=('ocr',))
     thread.start()
     return jsonify(message="進行圖片光學解析")
+
+
 # run_ocr
 if __name__ == '__main__':
     app.run(debug=False)

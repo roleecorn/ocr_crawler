@@ -1,7 +1,8 @@
 from selenium import webdriver
+from typing import List
 
 
-def get_all_classes(driver: webdriver.Chrome) -> list[str]:
+def get_all_classes(driver: webdriver.Chrome) -> List[str]:
     """
     Get all unique class names from the current page.
     :param driver: The selenium webdriver instance.

@@ -1,19 +1,20 @@
-lastupdate: '2023-09-30 14:23:57.318304'
-nextpage: ''
+lastupdate: 2023-09-08
+target: tile_wrapper_outer
+nextpage: load_more
+method: append
 position:
-  money:
-    X: 169
-    Y: 200
-    h: -18
-    w: -166
-  star:
-    X: 0
-    Y: 0
-    h: 111
-    w: 0
-  title:
+  money: 
+    X: 116
+    Y: 460
+    w: -114
+    h: -14
+  title: 
     X: 4
     Y: 424
-    h: 38
     w: 332
-target: tile_wrapper_outer
+    h: 38
+  star: 
+    X: 116
+    Y: 485
+    w: -27
+    h: -22
