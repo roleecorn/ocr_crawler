@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-    <title>Image Annotation</title>
-    <style>
+    <head>
+        <title>Image Annotation</title>
+        <style>
         body {
             display: flex;
             flex-direction: column;
@@ -14,31 +14,55 @@
             background-color: #f0f0f0;
             font-family: Arial, sans-serif;
         }
+    
+        #description-container {
+        background-color: #f0f0f0;
+        padding: 10px;
+        border-radius: 5px;
+        width: 80%;
+        display: flex;
+        justify-content: center; /* 將內部的 #description 元素置中 */
+        margin-bottom: 20px; /* 確保說明文與其它元素之間有間距 */
+        }
 
+        #description {
+            text-align: left; /* 文字向左對齊 */
+            max-width: 600px; /* 可以根據需求調整此值 */
+        }
+
+    
         #canvas {
             border: 1px solid black;
             margin-top: 20px;
         }
-
+    
         #fileUpload,
         #mySelect,
         button {
             margin: 10px;
         }
     </style>
-</head>
 
-<body>
-    <select id="mySelect">
-        <option value="money">money</option>
-        <option value="name">name</option>
-        <option value="star">star</option>
-    </select>
-    <canvas id="canvas"></canvas>
-    <input type="file" id="fileUpload" />
-    <input type="text" id="filename" placeholder="Enter filename here">
-    <button onclick="sendData()">Submit</button>
-    <script>
+    </head>
+
+    <body>
+        <select id="mySelect">
+            <option value="money">money</option>
+            <option value="name">name</option>
+            <option value="star">star</option>
+        </select>
+        <canvas id="canvas"></canvas>
+        <input type="file" id="fileUpload" />
+        <input type="text" id="filename" placeholder="Enter filename here">
+        <button onclick="sendData()">Submit</button>
+        <div id="description-container">
+            <div id="description">
+            1. 用選擇檔案選擇範例商品卡<br>
+            2. 在顯示出的圖片上選擇需要的範圍<br>
+            3. 按下submit，下載對應的標記結果
+            </div>
+        </div>
+        <script>
         let canvas = document.getElementById('canvas');
         let ctx = canvas.getContext('2d');
         let rect = {};
@@ -112,6 +136,6 @@
         canvas.addEventListener('mouseup', mouseUp, false);
         canvas.addEventListener('mousemove', mouseMove, false);
     </script>
-</body>
+    </body>
 
 </html>

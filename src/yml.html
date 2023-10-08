@@ -78,9 +78,27 @@
         </script>
             <style>
                 body {
-                    font-family: 'Arial', sans-serif;
+                    /* font-family: 'Arial', sans-serif; */
+                    font-family: 'Courier New', monospace;
                     margin: 40px;
                     font-size: 20px;
+                    background-color: #EEEEEE;
+                }
+                .manual {
+                    position: absolute;
+                    top: 5%;
+                    right: 5%;
+                    width: 30%;  
+                    height: 20%;  
+                    padding: 5px;
+                    border: 1px solid #ccc;
+                    border-radius: 3%;
+                    background-color: #999999;
+                    box-shadow: 0px 0px 5px rgba(0,0,0,0.2);
+                    overflow: auto;  /* 如果內容超過此大小，將提供滾動條 */
+                }
+                .manual h3 {
+                    margin-top: 0;
                 }
         
                 .container {
@@ -116,7 +134,7 @@
         
                 input[type="text"] {
                     padding: 8px 12px;
-                    border: 1px solid #ccc;
+                    border: 1px solid #EEEEEE;
                     border-radius: 4px;
                 }
         
@@ -137,47 +155,60 @@
             <div class="input-section">
                 <h2>Data</h2>
                 <div class="position-group">
-                    <label>Target:</label>
+                    <label>Target : 　 </label>
                     <input type="text" id="target" />
                 </div>
                 <div class="position-group">
-                    <label>Next page:</label>
+                    <label>Next page :</label>
                     <input type="text" id="Next_page" />
                 </div>
                 <div class="position-group">
-                    <label>Last Update:</label>
+                    <label>Last Update :</label>
                     <span type="text" id="lastupdate" ></span>
                 </div>
     
-                <h4>Position</h4>
+                <h2>Position</h2>
                 <div class="position-section">
-                    <h5>Money</h5>
+                    <h4>Money</h4>
                     <div class="position-group">
                         X: <input type="text" id="money_x" />
                         Y: <input type="text" id="money_y" />
+                    </div>
+                    <div class="position-group">
                         W: <input type="text" id="money_w" />
                         H: <input type="text" id="money_h" />
                     </div>
     
-                    <h5>Title</h5>
+                    <h4>Title</h4>
                     <div class="position-group">
                         X: <input type="text" id="title_x" />
                         Y: <input type="text" id="title_y" />
+                    </div>
+                    <div class="position-group">
                         W: <input type="text" id="title_w" />
                         H: <input type="text" id="title_h" />
                     </div>
     
-                    <h5>Star</h5>
+                    <h4>Star</h4>
                     <div class="position-group">
                         X: <input type="text" id="star_x" />
                         Y: <input type="text" id="star_y" />
+                    </div>
+                    <div class="position-group">
                         W: <input type="text" id="star_w" />
                         H: <input type="text" id="star_h" />
                     </div>
                 </div>
             </div>
             <button onclick="submitData(document.getElementById('shop').value)">發送</button>
+        
         </div>
-    
+        <div class="manual">
+            <h3>操作手冊</h3>
+            1. 輸入目標網站名稱，點擊GO送出<br>
+            2. 輸入Target資料(商品卡名稱)<br>
+            3. 輸入Next page資料(下一頁元件)<br>
+            4. 點擊發送，存檔(注意會覆蓋舊資料)
+        </div>
     </body>
 </html>
