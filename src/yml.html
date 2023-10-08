@@ -11,10 +11,11 @@
         function loadData(shop) {
             console.log(shop);
             $.get("/get_yml?shop="+shop, function(data) {
+                console.log(data);
                 $('#lastupdate').text(data['lastupdate']);
                 $('#Next_page').val(data['nextpage']);
                 $('#target').val(data['target']);
-        
+                $('#actionSelect').val(data['method']);
                 $('#money_x').val(data['position']['money']['X']);
                 $('#money_y').val(data['position']['money']['Y']);
                 $('#money_w').val(data['position']['money']['w']);
@@ -33,10 +34,15 @@
         }
         
         function submitData(shop) {
+            const confirmation = window.confirm("您確定要提交這些資料嗎？");
+            if (!confirmation) {
+                return;
+            }
             const data = {
                 lastupdate: $('#lastupdate').val(),
                 target: $('#target').val(),
                 nextpage: $('#Next_page').val(),
+                method: $('#actionSelect').val(),
                 position: {
                     money: {
                         X: parseInt($('#money_x').val()),
@@ -59,6 +65,7 @@
                 }
             };
         
+
             $.ajax({
                 url: '/save_yml/' + shop,
                 method: 'POST',
@@ -73,8 +80,6 @@
             });
         }
         
-        // Initial load
-        // loadData();
         </script>
             <style>
                 body {
@@ -132,12 +137,13 @@
                     background-color: #0056b3;
                 }
         
-                input[type="text"] {
+                input[type="text"], #actionSelect{
                     padding: 8px 12px;
                     border: 1px solid #EEEEEE;
                     border-radius: 4px;
                 }
-        
+
+                        
             </style>
     </head>
     <body>
@@ -162,6 +168,16 @@
                     <label>Next page :</label>
                     <input type="text" id="Next_page" />
                 </div>
+                <div class="position-group">
+                    <label>Method :　　</label>
+                    <select id="actionSelect">
+                        <option value=""></option>
+                        <option value="next">next</option>
+                        <option value="append">append</option>
+                    </select>
+                </div>
+
+                
                 <div class="position-group">
                     <label>Last Update :</label>
                     <span type="text" id="lastupdate" ></span>
