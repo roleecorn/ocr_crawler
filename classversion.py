@@ -2,7 +2,6 @@
 import sqlite3
 from pathlib import Path
 from datetime import datetime
-import os
 import time
 from typing import List
 # Third-party imports
@@ -10,77 +9,50 @@ from dotenv import load_dotenv
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import ElementNotInteractableException
 import yaml
+from views.selenium_drive import driver_class
+from views.new_db import sql_add
 
 # Load environment variables (special case)
 load_dotenv()
 
 # Local application imports that depend on environment variables
-import util
-import driver_control
 from debugger import Debugger
+import driver_control
+import util
 
 
-class ocr_crawler:
+
+class ocr_crawler(driver_class):
     def __init__(self, cite: str, test: bool = True) -> None:
+        super().__init__()
         self.cite = cite
         self.home = Path.cwd()
         self.test = test
-        # self.driverpath = self.home / 'chromedriver.exe'
-        self.driverpath = Path(os.getenv("DriverPath"))
-        self.chromepath = Path(os.getenv("Chromepath"))
-        self.driver = None
         self.db_path = self.home / 'sql' / f"{cite}.db"
         self.read_csv()
         current_time = datetime.now()
         self.current_date = str(current_time.date())
         self.version = int(current_time.timestamp())
         if not self.db_path.exists():
-            self.sql_add()
+            Debugger.info_print("新增資料庫")
+            sql_add(db_path=self.db_path, cite=cite)
             time.sleep(1)
         with open(self.home / 'cite_envs' / f"{cite}.yml", 'r') as file:
             cite_config = yaml.safe_load(file)
         self.target_class: str = cite_config.get('target', "")
         self.position: dict[str, dict[str, int]
                             ] = cite_config.get('position', {})
-        self.nextpage: dict[str, str] = cite_config.get('nextpage', {})
-        # self.SESSION = sqlite3.connect(self.db_path)
-
-    def sql_add(self) -> None:
-        Debugger.info_print('new database')
-        status = sqlite3.connect(self.db_path)
-        query = f"""
-        CREATE TABLE {self.cite} (
-            name TEXT,
-            imgcode TEXT,
-            oriprice INT,
-            price INT,
-            color INT,
-            feature TEXT,
-            gender INT,
-            brand TEXT,
-            fabric TEXT,
-            path TEXT,
-            ver INT
-        )
-        """
-        status.execute(query)
-        status.close()
+        self.nextpage: str = cite_config.get('nextpage', "")
+        self.nextpage_method: str = cite_config.get('method', "")
 
     def read_csv(self) -> None:
         self.listsite, self.site_feature = util.read_csv(
             (self.home / 'cite_file' / f'{self.cite}_test.csv'))
 
-    def new_driver(self):
-        Debugger.info_print('new driver')
-        self.driver = util.new_driver(dpath=self.driverpath,
-                                      cpath=self.chromepath)
-
-    def close(self):
-        if self.driver:
-            self.driver.close()
-
-    def one_page_start(self, imgpath: Path, img_features: List[str],
-                       ocr: bool = False):
+    def one_page_capture(self, imgpath: Path,
+                         img_features: List[str],
+                         ocr: bool = False,
+                         save: bool = True):
         """
         執行一個頁面的截圖
         """
@@ -91,94 +63,67 @@ class ocr_crawler:
                 "class name", self.target_class)
         except NoSuchElementException:
             Debugger.error_print('element not find in target_element')
+            return
         SESSION = sqlite3.connect(self.db_path)
         for element in target_elements:
             tmp = util.capture(ele=element, path=imgpath)
             datas = {
-                # "price": 100.50,
-                # "oriprice": 150.00,
                 "imgcode": tmp,
-                # "facturer": "ABC Company",
-                # "feature": "Waterproof",
-                # "color": "Blue",
-                # "name": "Cool Shoe",
-                # "star": 4.5,
                 "path": '/'.join(img_features),
-                # "sex": 1,
-                # # Assuming 0 for Female, 1 for Male, -1 for Unknown
                 "ver": self.version
             }
             if ocr:
-                datas["price"] = util.Ocr(img=imgpath/tmp,
-                                          posit=self.position['money'])
-                datas["name"] = util.Ocr(img=imgpath/tmp,
-                                         posit=self.position['title'])
-                datas["star"] = util.Ocr(img=imgpath/tmp,
-                                         posit=self.position['star'])
+                price = util.Ocr(img=imgpath/tmp,
+                                 posit=self.position['money'])
+                datas["price"] = util.remove_non_number(price)
+                name = util.Ocr(img=imgpath/tmp,
+                                posit=self.position['title'])
+                datas["name"] = util.remove_non_alphanumeric(name)
+                star = util.Ocr(img=imgpath/tmp,
+                                posit=self.position['star'])
+                datas["star"] = util.remove_non_number(star)
             clo = util.cloth(datas=datas)
             clo.writedb(db=SESSION, tablename=self.cite)
             del clo
-        SESSION.commit()
+        if save:
+            SESSION.commit()
+        else:
+            SESSION.rollback()
         SESSION.close()
 
     def test_start(self):
         """
         執行第一個網址的執行
         """
-        Debugger.info_print('test start')
+        Debugger.info_print('Test start')
         self.driver.get(url=self.listsite[0])
         time.sleep(3)
         if self.driver.current_url != self.listsite[0]:
             self.driver.get(url=self.listsite[0])
         p = self.home / 'image' / self.cite / self.current_date
         imgpath = util.check_imgpath(imgpath=p, imgfile=['test'])
-        self.one_page_start(imgpath=imgpath, img_features=['test'])
+        self.one_page_capture(imgpath=imgpath,
+                              img_features=['test'], save=False)
 
     def regular_start(self, subcite: int, ocr: bool = False):
         """
         執行選定目標編號網址
         """
         img_features = self.site_feature[subcite]
-        Debugger.info_print(f'regular start {img_features}')
         self.driver.get(url=self.listsite[subcite])
         if self.driver.current_url != self.listsite[subcite]:
             self.driver.get(url=self.listsite[subcite])
         p = self.home / 'image' / self.cite / self.current_date
         imgpath = util.check_imgpath(imgpath=p,
                                      imgfile=img_features)
-        if self.nextpage['method'] == 'extend':
-            while True:
-                driver_control.go_bottom_and_wait(driver=self.driver)
-                try:
-                    buttom = self.driver.find_element(
-                        "class name", self.nextpage['item'])
-                    self.driver.execute_script(
-                        "arguments[0].scrollIntoView();", buttom)
-                    buttom.click()
-                except NoSuchElementException:
-                    Debugger.info_print('no nextpage')
-                    break
-                except Exception as e:
-                    Debugger.error_print(str(e))
-                    break
-            self.one_page_start(
+        if self.nextpage_method == 'append':
+            driver_control.append_page(obj=self)
+            self.one_page_capture(
                 imgpath=imgpath, img_features=img_features, ocr=ocr)
-        elif self.nextpage['method'] == 'new':
-            while True:
-                self.one_page_start(
-                    imgpath=imgpath, img_features=img_features, ocr=ocr)
-                try:
-                    buttom = self.driver.find_element(
-                        "class name", self.nextpage['item'])
-                    self.driver.execute_script(
-                        "arguments[0].scrollIntoView();", buttom)
-                    buttom.click()
-                except NoSuchElementException:
-                    Debugger.info_print('no nextpage')
-                    break
-                except Exception as e:
-                    Debugger.error_print(str(e))
-                    break
+        elif self.nextpage_method == 'next':
+            driver_control.next_page(obj=self, imgpath=imgpath,
+                                     img_features=img_features,
+                                     ocr=ocr)
         else:
             raise AttributeError
 
@@ -207,10 +152,7 @@ class ocr_crawler:
             try:
                 ele = self.driver.find_element(
                     "class name", element)
-            except NoSuchElementException:
-                continue
-            except Exception as e:
-                # Debugger.error_print(str(e))
+            except Exception:
                 continue
             try:
                 util.capture(ele=ele, path=search_path, name=element)
