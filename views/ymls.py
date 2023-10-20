@@ -42,8 +42,6 @@ def save_yml(shop):
     fullpath = base_path / shop
     if base_path not in fullpath.parents:
         return jsonify({"message": "Not allowed"}), 400
-    if shop not in shops:
-        return jsonify({"message": "Invalid data"}), 400
     data_to_save['lastupdate'] = str(datetime.now())
     # 写入文件
     with open(fullpath, 'w') as file:
